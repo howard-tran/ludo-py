@@ -1,0 +1,56 @@
+# this compose file use for dev only
+
+version: "3.5"
+
+services:
+  ludo-application:
+    depends_on:
+      - "ludo-database"
+    restart: always
+    networks:
+      - ludo
+    hostname: ludo-application
+    build:
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - "8083:5000"
+    env_file:
+      - production.env
+    volumes: # live monitor from soure code
+      - ./application:/home/app/application
+      - ./entities:/home/app/entities
+      - ./gunicorn.error.log:/home/app/gunicorn.error.log
+      - ./gunicorn.log:/home/app/gunicorn.log
+    command: gunicorn -w 2 -b :5000 -c gunicorn.config.py app:app
+  ludo-database:
+    image: postgres:13.3-alpine
+    restart: always
+    networks:
+      - ludo
+    hostname: ludo-database
+    ports:
+      - "5434:5432"
+      - "5435:5433"
+    env_file:
+      - production.env
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+
+  ludo-adminer:
+    depends_on:
+      - "ludo-database"
+    image: adminer:4.8.0-standalone
+    restart: always
+    networks:
+      - ludo
+    hostname: ludo-adminer
+    ports:
+      - "8085:8080"
+
+networks:
+  ludo:
+    ipam:
+      driver: default
+      config:
+        - subnet: "10.3.0.0/27"
