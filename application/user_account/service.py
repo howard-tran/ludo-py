@@ -2,7 +2,6 @@ from json import dumps
 from uuid import uuid4
 from werkzeug.exceptions import NotFound
 from application.share.utils import stdout, utils
-from application.sign_up_account.dto.sign_up_dto import SignUpDto
 from flask import json, jsonify
 from entities.user import User
 from .repository import repository
