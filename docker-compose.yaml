@@ -21,8 +21,7 @@ services:
     volumes: # live monitor from soure code
       - ./application:/home/app/application
       - ./entities:/home/app/entities
-      - ./gunicorn.error.log:/home/app/gunicorn.error.log
-      - ./gunicorn.log:/home/app/gunicorn.log
+      - ./log:/home/app/log
     command: gunicorn -w 2 -b :5000 -c gunicorn.config.py app:app
   ludo-database:
     image: postgres:13.3-alpine
